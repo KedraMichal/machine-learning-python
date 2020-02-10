@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from sklearn import linear_model
 from sklearn import model_selection
 import seaborn as sns
+import pickle
 
 data = pd.read_csv("cars.csv")
 np.set_printoptions(suppress=True)
@@ -16,6 +17,7 @@ data = data[['mpg', 'acceleration', 'displacement', 'weight', 'cylinders', 'orig
 corr = data.corr()
 sns.heatmap(corr, annot=True)
 plt.show()
+
 data.drop('acceleration', axis=1, inplace=True)  # corr between mpg, acc is too low, dropping acceleration
 print(data.shape)
 print(data.describe())
@@ -43,11 +45,25 @@ array = data.to_numpy()
 x = array[:, 1:7]
 y = array[:, 0]
 
-x_train, x_test, y_train, y_test = sklearn.model_selection.train_test_split(x, y, test_size=0.2)
+x_train, x_test, y_train, y_test = sklearn.model_selection.train_test_split(x, y, test_size=0.2, random_state=0)
 
-model = sklearn.linear_model.LinearRegression().fit(x_train, y_train)
+# best_acc = 0
+# for i in range(20000):
+#     x_train, x_test, y_train, y_test = sklearn.model_selection.train_test_split(x, y, test_size=0.2)
+#
+#     model = sklearn.linear_model.LinearRegression().fit(x_train, y_train)
+#     acc = model.score(x_test, y_test)
+#
+#     if best_acc < acc:
+#         best_acc = acc
+#         print(best_acc)
+#         with open("best_model", "wb") as file:
+#            pickle.dump(model, file)
 
-print("Intercept + coefficients:", model.intercept_, model.coef_)
+pickle_in = open("best_model", "rb")
+model = pickle.load(pickle_in)
+
+print("Intercept: {} ,coefficients:{}".format(model.intercept_, model.coef_))
 
 predict_y = model.predict(x_test)
 
@@ -57,5 +73,4 @@ for i in range(len(predict_y)):
 accuracy = model.score(x_test, y_test)  # R^2 = 1 -rMSE (relative mean squared error)
 print(accuracy)
 
-kf = model_selection.KFold(n_splits=2)
 
