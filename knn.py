@@ -37,3 +37,11 @@ knn_model = KNeighborsClassifier(n_neighbors=3).fit(x_train, y_train)
 
 acc = knn_model.score(x_test, y_test)
 print(acc)
+
+predicted = knn_model.predict(x_test)
+class_names = ["unacc", "acc", "good", "vgood"]
+
+predicted_name = [class_names[p] for p in predicted]
+
+for i in range(len(predicted)):
+    print("Actual class:{}, predicted class:{}".format(class_names[y_test[i]], predicted_name[i]))
