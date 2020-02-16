@@ -6,8 +6,7 @@ from sklearn import svm
 from sklearn.model_selection import KFold
 from sklearn.model_selection import StratifiedKFold
 from sklearn.model_selection import cross_val_score
-
-
+from sklearn.metrics import confusion_matrix
 
 data = pd.read_csv('cars.csv')
 np.set_printoptions(suppress=True)
@@ -21,20 +20,31 @@ y = arr[:, 4]
 x_train, x_test, y_train, y_test = sklearn.model_selection.train_test_split(x, y, test_size=0.2)
 
 svm_model = svm.SVC(kernel='linear', C=3)
-#svm_model.fit(x_train, y_train)
+svm_model.fit(x_train, y_train)
 
-svm_model2 = svm.SVC(kernel='poly', C=3)
+predicted = svm_model.predict(x_test)
+conf_mat = confusion_matrix(y_test, predicted)
+print(conf_mat)
+
+svm_linear = svm.SVC(kernel='linear', C=3)
+# svm_model3.fit(x_train, y_train)
+
+svm_poly = svm.SVC(kernel='poly', C=3)
 # svm_model2.fit(x_train, y_train)
 
-#acc = svm_model.score(x_test, y_test)
-#acc2 = svm_model2.score(x_test, y_test)
+# acc = svm_model.score(x_test, y_test)
+# acc2 = svm_model2.score(x_test, y_test)
 
-kfold = StratifiedKFold(n_splits=7)
-
-cv_results = cross_val_score(svm_model, x_train, y_train, cv=kfold)
-cv_results2 = cross_val_score(svm_model2, x_train, y_train, cv=kfold)
+### K-fold ross validation
+cv_results = cross_val_score(svm_linear, x_train, y_train, cv=10, scoring='accuracy')
+cv_results2 = cross_val_score(svm_poly, x_train, y_train, cv=10, scoring='accuracy')
 
 print("Linear:{}, poly:{}".format(cv_results.mean(), cv_results2.mean()))
 
+### Stratified k-fold cv - each fold contains roughly the same proportions of the x (here 3) types of class labels
 
+strat = StratifiedKFold(n_splits=10, shuffle=True, random_state=3)
+strat_results = cross_val_score(svm_linear, x_train, y_train, cv=strat, scoring='accuracy')
+strat_results2 = cross_val_score(svm_poly, x_train, y_train, cv=strat, scoring='accuracy')
 
+print("Linear:{}, poly:{}".format(strat_results.mean(), strat_results2.mean()))
