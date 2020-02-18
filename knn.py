@@ -7,7 +7,6 @@ from sklearn import linear_model, preprocessing
 
 data = pd.read_csv("car.csv")
 
-
 for col in data:
     print(data[col].unique())
 
@@ -25,13 +24,15 @@ lug_boot = le.fit_transform(data["lug_boot"])
 safety = le.fit_transform(data["safety"])
 obj_class = le.fit_transform(data["class"])
 
-
 arr = np.vstack([buying, maint, door, persons, lug_boot, safety, obj_class])
 arr = arr.transpose()
 x = arr[:, 0:6]
 y = arr[:, 6]
 
-x_train, x_test, y_train, y_test = sklearn.model_selection.train_test_split(x, y, test_size=0.1)
+### Data standardization
+x = preprocessing.scale(x)  # checked that there's average 10% better accuracy in this model with standardization
+
+x_train, x_test, y_train, y_test = sklearn.model_selection.train_test_split(x, y, test_size=0.2)
 
 knn_model = KNeighborsClassifier(n_neighbors=3).fit(x_train, y_train)
 
@@ -43,5 +44,5 @@ class_names = ["unacc", "acc", "good", "vgood"]
 
 predicted_name = [class_names[p] for p in predicted]
 
-for i in range(len(predicted)):
-    print("Actual class:{}, predicted class:{}".format(class_names[y_test[i]], predicted_name[i]))
+# for i in range(len(predicted)):
+#    print("Actual class:{}, predicted class:{}".format(class_names[y_test[i]], predicted_name[i]))
