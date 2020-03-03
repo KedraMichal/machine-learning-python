@@ -5,9 +5,15 @@ from sklearn import model_selection
 from sklearn import linear_model
 from sklearn import linear_model
 from sklearn.metrics import confusion_matrix
+from sklearn import preprocessing
+from sklearn.metrics import classification_report
 
 data = pd.read_csv("heart_disease_dataset.csv")
 
+
+# print(data.num.value_counts())
+# groupby_class = data.groupby("num")
+# print(groupby_class)
 data = data.dropna(how="any")
 data = data.drop(columns=["ca", "thal", "restecg", "trestbps", "fbs", "chol"])
 data = data.to_numpy()
@@ -31,3 +37,6 @@ print(acc)
 
 conf = confusion_matrix(y_test, predicted)
 print(conf)
+
+class_report = classification_report(y_test, predicted)
+print(class_report)
