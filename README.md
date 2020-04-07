@@ -6,3 +6,4 @@
 4. SVM (support vector machine)
 5. Random forest
 6. K-means
+7. PCA
